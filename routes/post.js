@@ -1,13 +1,12 @@
-var express = require('express');
-var router = express.Router();
-var mongoose = require('mongoose');
-var Task = require('../models/Task.js');
-var passport = require('passport');
+const express = require('express');
+const router = express.Router();
+const Task = require('../models/Task.js');
+const passport = require('passport');
 require('../config/passport')(passport);
 
-getToken = function (headers) {
+const getToken = headers => {
   if (headers && headers.authorization) {
-    var parted = headers.authorization.split(' ');
+    let parted = headers.authorization.split(' ');
     if (parted.length === 2) {
       return parted[1];
     } else {
@@ -17,10 +16,10 @@ getToken = function (headers) {
     return null;
   }
 };
-router.get('/', passport.authenticate('jwt', { session: false}), function(req, res) {
-  var token = getToken(req.headers);
+router.get('/', passport.authenticate('jwt', { session: false}), (req, res)=> {
+  const token = getToken(req.headers);
   if (token) {
-    Task.find(function (err, post) {
+    Task.find((err, post)=> {
       if (err) return next(err);
       res.json(post);
     });
@@ -28,10 +27,10 @@ router.get('/', passport.authenticate('jwt', { session: false}), function(req, r
     return res.status(403).send({success: false, msg: 'Unauthorized.'});
   }
 });
-router.get('/:id', passport.authenticate('jwt', { session: false}), function(req, res, next) {
-  var token = getToken(req.headers);
+router.get('/:id', passport.authenticate('jwt', { session: false}), (req, res, next)=> {
+  const token = getToken(req.headers);
   if (token) {
-    Task.findById(req.params.id,function (err, post) {
+    Task.findById(req.params.id, (err, post)=> {
       if (err) return next(err);
       res.json(post);
     })
@@ -40,10 +39,10 @@ router.get('/:id', passport.authenticate('jwt', { session: false}), function(req
   }
 });
 
-router.post('/', passport.authenticate('jwt', { session: false}), function(req, res) {
-  var token = getToken(req.headers);
+router.post('/', passport.authenticate('jwt', { session: false}), (req, res)=> {
+  const token = getToken(req.headers);
   if (token) {
-    Task.create(req.body, function (err, post) {
+    Task.create(req.body, (err, post)=> {
       if (err) return next(err);
       res.json(post);
     })
@@ -51,10 +50,10 @@ router.post('/', passport.authenticate('jwt', { session: false}), function(req, 
     return res.status(403).send({success: false, msg: 'Unauthorized.'});
   }
 });
-router.put('/:id', passport.authenticate('jwt', { session: false}), function(req, res, next) {
-    var token = getToken(req.headers);
+router.put('/:id', passport.authenticate('jwt', { session: false}), (req, res, next)=> {
+  const token = getToken(req.headers);
   if (token) {
-    Task.findByIdAndUpdate(req.params.id, req.body, {new: true}, function (err, post) {
+    Task.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, post)=> {
       if (err) return next(err);
       res.json(post);
     });
@@ -63,10 +62,10 @@ router.put('/:id', passport.authenticate('jwt', { session: false}), function(req
   }
 });
 
-router.delete('/:id', passport.authenticate('jwt', { session: false}), function(req, res, next) {
-    var token = getToken(req.headers);
+router.delete('/:id', passport.authenticate('jwt', { session: false}), (req, res, next)=> {
+  const token = getToken(req.headers);
   if (token) {
-    Task.findByIdAndRemove(req.params.id, function (err, post) {
+    Task.findByIdAndRemove(req.params.id, (err, post)=> {
       if (err) return next(err);
       res.json(post);
     });

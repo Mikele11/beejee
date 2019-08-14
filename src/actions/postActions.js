@@ -10,7 +10,6 @@ export const fetchPosts =()=> dispatch => {
     })
   })
   .catch((error) => {
-    this.props.history.push("/login"); 
     console.log('action err',error)	  
   });
 };
@@ -28,7 +27,6 @@ export const deletePost = id => dispatch => {
       .catch((error) => {
         console.log('error',error);
       });
-
   });
 };
 
@@ -43,7 +41,6 @@ export const createPost = (postData) => dispatch => {
       }
     )
     .catch(err =>{
-      this.props.history.push("/")
       console.log('action err',err)
   });
 };

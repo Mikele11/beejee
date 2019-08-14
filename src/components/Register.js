@@ -1,48 +1,42 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css';
 
-class Create extends Component {
+const Register = props => {
+  const [state, setValues] = useState({
+    username: '',
+    password: ''
+  });
 
-  constructor() {
-    super();
-    this.state = {
-      username: '',
-      password: ''
-    };
-  }
-  onChange = (e) => {
-    const state = this.state
-    state[e.target.name] = e.target.value;
-    this.setState(state);
-  }
+  const updateField = e => {
+    setValues({
+      ...state,
+      [e.target.name]: e.target.value
+    });
+  };
 
-  onSubmit = (e) => {
+  const submit = (e) => {
     e.preventDefault();
-
-    const { username, password } = this.state;
+    const { username, password } = state;
 
     axios.post('/api/auth/register', { username, password })
-      .then((result) => {
-        this.props.history.push("/login")
+      .then(() => {
+        props.history.push('/login');
       });
-  }
+  };
 
-  render() {
-    const { username, password } = this.state;
-    return (
-      <div class="container">
-        <form class="form-signin" onSubmit={this.onSubmit}>
-          <h2 class="form-signin-heading">Register</h2>
-          <label for="inputEmail" class="sr-only">Email address</label>
-          <input type="email" class="form-control" placeholder="Email address" name="username" value={username} onChange={this.onChange} required/>
-          <label for="inputPassword" class="sr-only">Password</label>
-          <input type="password" class="form-control" placeholder="Password" name="password" value={password} onChange={this.onChange} required/>
-          <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
-        </form>
-      </div>
-    );
-  }
-}
+  return (
+    <div class="container">
+      <form class="form-signin" onSubmit={submit}>
+        <h2 class="form-signin-heading">Register</h2>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" class="form-control" placeholder="Email address" name="username" value={state.username} onChange={updateField} required/>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" class="form-control" placeholder="Password" name="password" value={state.password} onChange={updateField} required/>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" onClick={submit}>Register</button>
+      </form>
+    </div>
+  );
+};
 
-export default Create;
+export default Register;

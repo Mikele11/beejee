@@ -11,11 +11,11 @@ import Update from './components/Upd';
 
 import { Provider } from 'react-redux';
 import store from './store';
-
+import history from 'history/createBrowserHistory'
 
 ReactDOM.render(
   <Provider store={store}>
-    <Router>
+    <Router history={history}>
       <div>
         <Route exact path='/' component={App} />
         <Route path='/login' component={Login} />
