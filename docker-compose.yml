@@ -1,0 +1,15 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: node ./bin/www
+    restart: always
+    ports:
+      - "3000:3000"
+    network_mode: host  
+  mongo:
+    container_name: mongo
+    restart: always
+    image: mongo:latest
+    ports:
+      - "27017:27017"

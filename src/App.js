@@ -22,6 +22,7 @@ class App extends Component {
     if (localStorage.getItem('jwtToken') === null ) {
       this.props.history.push("/login")
     }
+    console.log('jwt',localStorage.getItem('jwtToken'))
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
     this.props.fetchPosts(); 
   }
@@ -66,7 +67,7 @@ class App extends Component {
       posts = currentTodos
     }
     const renderTodos = posts.map((post, index) => {
-      return <div class="article">
+      return <section class="article">
               <div class ="article_date">
                 <div>Email: </div>
                 <div>{post.email}</div>
@@ -91,7 +92,7 @@ class App extends Component {
                     </div>
                   </div>: <div/>
               }  
-              </div>
+             </section>
       });
 
     const pageNumbers = [];
