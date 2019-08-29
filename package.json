@@ -5,9 +5,9 @@
   "scripts": {
     "start": "node ./bin/www",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "prettier": "prettier — write src/**/*.js"
+    "prettier": "prettier — write src/**/*.js",
+    "test": "mocha **/*.spec.js"
   },
   "keywords": [],
   "author": "Mikele",
@@ -22,6 +22,8 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-latest": "^6.24.1",
     "babel-preset-react": "^6.24.1",
+    "chai": "^4.2.0",
+    "chakram": "^1.5.0",
     "css-loader": "^0.28.11",
     "eslint": "^4.16",
     "eslint-config-airbnb": "^18.0.1",
@@ -33,8 +35,9 @@
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.0.7",
     "mini-css-extract-plugin": "^0.2.0",
+    "mocha": "^6.2.0",
     "react": "^16.9.0",
-    "react-dom": "^16.7.0-alpha.2"
+    "react-dom": "^16.9.0"
   },
   "dependencies": {
     "@types/react": "^16.9.2",
@@ -64,7 +67,8 @@
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "semantic-ui-react": "^0.80.0",
-    "serve-favicon": "^2.5.0"
+    "serve-favicon": "^2.5.0",
+    "supertest": "^4.0.2"
   },
   "engines": {
     "node": ">= 6.0.0",

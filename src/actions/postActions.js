@@ -14,6 +14,20 @@ export const fetchPosts =()=> dispatch => {
   });
 };
 
+export const fetchPostsPagin =(page,perPage)=> dispatch => {
+  return axios.get(`/api/post/${page}/${perPage}`)
+  .then(res => {
+    console.log('resres res',res)	
+    dispatch({
+      type: FETCH_POSTS,
+      payload: res.data
+    })
+  })
+  .catch((error) => {
+    console.log('action err',error)	  
+  });
+};
+
 export const deletePost = id => dispatch => {
   return axios.delete(`/api/post/${id}`)
   .then((result) => {

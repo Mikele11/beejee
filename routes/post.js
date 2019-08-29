@@ -16,12 +16,35 @@ const getToken = headers => {
     return null;
   }
 };
-router.get('/', passport.authenticate('jwt', { session: false}), (req, res)=> {
+router.get('/', passport.authenticate('jwt', { session: false}), (req, res, next)=> {
   const token = getToken(req.headers);
   if (token) {
     Task.find((err, post)=> {
       if (err) return next(err);
       res.json(post);
+    });
+  } else {
+    return res.status(403).send({success: false, msg: 'Unauthorized.'});
+  }
+});
+
+router.get('/:page/:perPage', passport.authenticate('jwt', { session: false}), async(req, res, next)=> {
+  const token = getToken(req.headers);
+  const page = +req.params.page || 1; // page
+  const size = +req.params.perPage || 10; // count on 1 page
+  let query = {};
+  query.skip = size * (page -  1 )
+  query.limit = size
+  if (token) {
+    const numOfList = await Task.count({});
+    Task.find({}, {}, query,(err, post)=> {
+      if (err) return next(err);
+      res.json({
+        list: post, 
+        currentPage: page, 
+        pages: Math.ceil(numOfList / size), 
+        totalCount: numOfList
+       });
     });
   } else {
     return res.status(403).send({success: false, msg: 'Unauthorized.'});
@@ -39,7 +62,7 @@ router.get('/:id', passport.authenticate('jwt', { session: false}), (req, res, n
   }
 });
 
-router.post('/', passport.authenticate('jwt', { session: false}), (req, res)=> {
+router.post('/', passport.authenticate('jwt', { session: false}), (req, res, next)=> {
   const token = getToken(req.headers);
   if (token) {
     Task.create(req.body, (err, post)=> {

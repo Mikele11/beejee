@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-import { fetchPosts, deletePost } from './actions/postActions.js';
+import { fetchPosts, deletePost, fetchPostsPagin } from './actions/postActions.js';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 class App extends Component {
@@ -22,9 +22,9 @@ class App extends Component {
     if (localStorage.getItem('jwtToken') === null ) {
       this.props.history.push("/login")
     }
-    console.log('jwt',localStorage.getItem('jwtToken'))
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
-    this.props.fetchPosts(); 
+    // this.props.fetchPosts(); 
+    this.props.fetchPostsPagin(1,3); 
   }
 
   compareBy = (key) => {
@@ -45,6 +45,7 @@ class App extends Component {
     this.setState({
       currentPage: Number(event.target.id)
     });
+    this.props.fetchPostsPagin(Number(event.target.id),3); 
   }
 
   logout = () => {
@@ -53,65 +54,67 @@ class App extends Component {
   }
 
   onDelete(index){
-    this.props.deletePost(this.props.posts[index]._id); 
+    this.props.deletePost(this.props.posts.list[index]._id); 
   }
   
   render() {
-    const { currentPage, todosPerPage } = this.state;
     let {posts} = this.state; 
-    const todos = this.props.posts;
-    const indexOfLastTodo = currentPage * todosPerPage;
-    const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
-    const currentTodos = todos.slice(indexOfFirstTodo, indexOfLastTodo);
-    if ( posts.length<1 ){ 
-      posts = currentTodos
-    }
-    const renderTodos = posts.map((post, index) => {
-      return <section class="article">
-              <div class ="article_date">
-                <div>Email: </div>
-                <div>{post.email}</div>
-              </div>
-              <div class ="article_date">
-                <div>Name: </div>
-                <div>{post.name}</div>
-              </div>
-              <div class ="article_date">
-                <div>Maked: </div>
-                <div>{post.maked ? 'maked already': 'not maked yet'}</div>
-              </div>
-              <div>{post.tasktext}</div>
-              {
-                ((localStorage.getItem('login')==='admin@admin')&&(localStorage.getItem('password')==='123')) ?                   
-                  <div class ="article_buttons">
-                    <div>
-                      <button class="btn btn-warning"><Link to={`/update/${this.props.posts[index]._id}`}>Update<i class="glyphicon glyphicon-edit"></i></Link></button>
-                    </div>
-                    <div>
-                      <button class="btn btn-danger" onClick={this.onDelete.bind(this,index)}>Delete<i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                    </div>
-                  </div>: <div/>
-              }  
-             </section>
+    let renderTodos = [];
+    let pageNumbers = [];
+    let renderPageNumbers;
+    const responceServer = this.props.posts;
+    console.log('responceServer',this.props.posts)
+    console.log('posts',posts)
+    console.log('this.props',this.props)
+      if ((posts.length<1)&&(responceServer.list)) {
+        posts = responceServer.list
+      }
+      console.log('postspostsposts',posts)
+      renderTodos = posts.map((post, index) => {
+        console.log('post111',post)
+        return <section class="article">
+                <div class ="article_date">
+                  <div>Email: </div>
+                  <div>{post.email}</div>
+                </div>
+                <div class ="article_date">
+                  <div>Name: </div>
+                  <div>{post.name}</div>
+                </div>
+                <div class ="article_date">
+                  <div>Maked: </div>
+                  <div>{post.maked ? 'maked already': 'not maked yet'}</div>
+                </div>
+                <div>{post.tasktext}</div>
+                {
+                  ((localStorage.getItem('login')==='admin@admin')&&(localStorage.getItem('password')==='123')) ?                   
+                    <div class ="article_buttons">
+                      <div>
+                        <button class="btn btn-warning"><Link to={`/update/${this.props.posts.list[index]._id}`}>Update<i class="glyphicon glyphicon-edit"></i></Link></button>
+                      </div>
+                      <div>
+                        <button class="btn btn-danger" onClick={this.onDelete.bind(this,index)}>Delete<i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                      </div>
+                    </div>: <div/>
+                }  
+               </section>
+        });
+  
+      for (let i = 1; i <= responceServer.pages; i++) {
+        pageNumbers.push(i);
+      }
+  
+      renderPageNumbers = pageNumbers.map(number => {
+        return (
+          <li
+            key={number}
+            id={number}
+            onClick={this.handleClick}
+          >
+            {number}
+          </li>
+        );
       });
-
-    const pageNumbers = [];
-    for (let i = 1; i <= Math.ceil(todos.length / todosPerPage); i++) {
-      pageNumbers.push(i);
-    }
-
-    const renderPageNumbers = pageNumbers.map(number => {
-      return (
-        <li
-          key={number}
-          id={number}
-          onClick={this.handleClick}
-        >
-          {number}
-        </li>
-      );
-    });
-
     return (
       <div class="container">
         <div class="panel panel-default">
@@ -127,18 +130,18 @@ class App extends Component {
             <h4><Link to="/create"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Task</Link></h4>
             <button 
               class="btn btn-default"
-              onClick={() => this.sortBy('name',currentTodos)} >Sort by name</button>
+              onClick={() => this.sortBy('name',posts)} >Sort by name</button>
             <button 
               class="btn btn-default"
-              onClick={() => this.sortBy('makes',currentTodos)}>Sort by status</button>
+              onClick={() => this.sortBy('makes',posts)}>Sort by status</button>
             <button 
               class="btn btn-default"
-              onClick={() => this.sortBy('email',currentTodos)}>Sort by email</button>
+              onClick={() => this.sortBy('email',posts)}>Sort by email</button>
             <div>
-              {renderTodos}
+              {this.props.posts.list? renderTodos: null}
             </div>
             <ul>
-              {renderPageNumbers}
+              {this.props.posts.list?renderPageNumbers: null}
             </ul>
           </div>
         </div>
@@ -149,10 +152,11 @@ class App extends Component {
 
 App.propTypes = {
   fetchPosts: PropTypes.func.isRequired,
+  fetchPostsPagin: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   posts: state.posts.postss
 });
 
-export default connect(mapStateToProps, { fetchPosts, deletePost })(App);
+export default connect(mapStateToProps, { fetchPosts, deletePost, fetchPostsPagin })(App);
