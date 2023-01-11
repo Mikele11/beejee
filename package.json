@@ -46,7 +46,7 @@
     "body-parser": "^1.18.2",
     "bootstrap": "^4.1.1",
     "express": "^4.16.3",
-    "jsonwebtoken": "^8.2.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.10",
     "mongoose": "^5.0.17",
     "mongodb": "^3.1.1",
